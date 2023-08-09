@@ -7,6 +7,7 @@ How add this script to your installed Tampermonkey browser extension: https://ww
 Another way to add the script quickly is importing the .zip file. How to? https://www.tampermonkey.net/faq.php#Q106
 
 How it looks.  
-Right-clicking the number gives a context menu from which you can copy the thread specific url or the source file path to clipboard.
+Right-clicking the number gives a context menu from which you can copy the thread specific url or the source file path to clipboard.  
+Use your keyboard number keys to scroll to a specific thread number... Like hit 12!
 
 ![Example](https://github.com/LouysPatriceBessette/GitHub-PR-helper/assets/19967303/133b1e34-1d2d-4a01-8fa3-cf2a19c6c23f)
