@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Pull Requests helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Deploys all threads (loads all hidden - adds numbers and a context menu)
 // @author       Louys Patrice Bessette
 // @match        https://github.com/*/*/pull/*
@@ -18,11 +18,12 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  padding: 2em;
+  padding: 1em;
   z-index: 999999;
-  background-color: yellow;
-  border: 1px solid red;
+  background-color: lightgrey;
+  border: 1px solid black;
   border-radius: 6px;
+  font-weight: bold;
 }
 .conversationNumber {
   background-color: red;
@@ -71,10 +72,12 @@
         endInit()
     }
 
+    let conversationCount = 0
+    let resolvedCount = 0
     const setConversationNumbers = () => {
         console.log("Init")
         const conversations = Array.from(document.querySelectorAll("[id^=review-thread-or-comment-id-]"))
-        console.log("Conversation count:", conversations.length)
+        conversationCount = conversations.length
 
         conversations.forEach((conversation, index) => {
             const numberElement = document.createElement("div")
@@ -83,6 +86,10 @@
             numberElement.innerText = index + 1
             numberElement.dataset.conversationNumber = index + 1
             conversation.querySelector("summary div").append(numberElement)
+
+            if(conversation.querySelector('.Details-content--closed')){
+                resolvedCount++
+            }
         })
     }
 
@@ -99,17 +106,17 @@
     const showScriptInProgress = () => {
         const modal = document.createElement("div")
         modal.classList.add("progressModal")
-        modal.innerText = "Userscript processing..."
+        modal.innerText = "GitHub Helper processing..."
         root.querySelector("body").append(modal)
 
     }
 
-    const hideScriptInProgress = () => {
+    const setScriptResult = () => {
         const modal = document.querySelector(".progressModal")
         const currWidth = modal.getBoundingClientRect().width
-        modal.innerText = "OK"
+        const percentageResolved = Math.round(resolvedCount / conversationCount * 100)
+        modal.innerHTML = `${conversationCount} comment` + (conversationCount > 1 ? 's' : '') + (conversationCount > 0 ? `<br>Resolved at ${percentageResolved}%` : '')
         modal.style.width = currWidth + "px"
-        setTimeout(() => modal.remove(), 800)
     }
 
     // Click event handler for the context menu on numbers
@@ -164,8 +171,9 @@
 
     const endInit = () => {
         setConversationNumbers()
+        console.log('conversationCount', conversationCount, 'resolvedCount', resolvedCount)
         scrollToConversation()
-        hideScriptInProgress()
+        setScriptResult()
         addClickListeners()
     }
 
